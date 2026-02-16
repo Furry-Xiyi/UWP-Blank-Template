@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <Platform Name="arm64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="UWP-Blank-Template/UWP.csproj">
+    <Platform Solution="*|arm64" Project="arm64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Build Solution="Release|x86" Project="false" />
+    <Deploy Solution="*|arm64" />
+    <Deploy Solution="*|x64" />
+    <Deploy Solution="Debug|x86" />
+  </Project>
+</Solution>
