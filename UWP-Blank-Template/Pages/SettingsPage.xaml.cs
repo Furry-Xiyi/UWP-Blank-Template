@@ -18,6 +18,14 @@ namespace UWP.Pages
         public SettingsPage()
         {
             this.InitializeComponent();
+
+            // 延迟到 Loaded 事件，确保所有控件都已完全初始化
+            this.Loaded += SettingsPage_Loaded;
+        }
+
+        private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 在页面完全加载后才加载设置
             LoadUI();
             LoadAppInfo();
             _isInitializing = false; // 初始化完毕
@@ -38,19 +46,21 @@ namespace UWP.Pages
             string material = localSettings.Values["AppMaterial"] as string ?? "Mica";
             RbMaterial.SelectedIndex = material == "Acrylic" ? 1 : 0;
 
-            // 导航栏位置
+            // 导航栏位置 - 关键修复：通过索引设置，而不是查找 Tag
             string pos = localSettings.Values["PanePosition"] as string ?? "Left";
-            foreach (ComboBoxItem item in PanePositionCombo.Items)
-            {
-                if (item.Tag?.ToString() == pos)
-                {
-                    PanePositionCombo.SelectedItem = item;
-                    break;
-                }
-            }
+            PanePositionCombo.SelectedIndex = pos == "Top" ? 1 : 0;
 
-            // 声音
-            bool sound = (localSettings.Values["EnableSound"] as bool?) ?? true;
+            // 声音 - 确保正确读取和设置
+            bool sound = true; // 默认开启
+            if (localSettings.Values.ContainsKey("EnableSound"))
+            {
+                sound = (bool)localSettings.Values["EnableSound"];
+            }
+            else
+            {
+                // 第一次启动，设置默认值
+                localSettings.Values["EnableSound"] = true;
+            }
             SoundToggle.IsOn = sound;
         }
 
@@ -123,23 +133,36 @@ namespace UWP.Pages
         {
             if (_isInitializing) return;
 
-            string selected = (PanePositionCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Left";
+            // 通过索引获取值，更可靠
+            string selected = PanePositionCombo.SelectedIndex == 1 ? "Top" : "Left";
             localSettings.Values["PanePosition"] = selected;
 
+            // 立即应用设置
             var frame = Window.Current.Content as Frame;
             if (frame?.Content is MainPage mainPage)
+            {
                 mainPage.ApplySettings();
+            }
         }
 
         private void SoundToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (_isInitializing) return;
 
-            localSettings.Values["EnableSound"] = SoundToggle.IsOn;
+            bool isOn = SoundToggle.IsOn;
+            localSettings.Values["EnableSound"] = isOn;
 
+            // 立即应用设置
+            ElementSoundPlayer.State = isOn
+                ? ElementSoundPlayerState.On
+                : ElementSoundPlayerState.Off;
+
+            // 同时通知 MainPage 应用设置
             var frame = Window.Current.Content as Frame;
             if (frame?.Content is MainPage mainPage)
+            {
                 mainPage.ApplySettings();
+            }
         }
     }
 }

@@ -63,8 +63,8 @@
                     <muxc:RadioButtons x:Name="RbMaterial"
                                        SelectionChanged="RbMaterial_SelectionChanged"
                                        Padding="12,0,0,12">
-                        <RadioButton x:Uid="MaterialMica" Content="Mica" Tag="Mica"/>
-                        <RadioButton x:Uid="MaterialAcrylic" Content="Acrylic" Tag="Acrylic"/>
+                        <RadioButton Content="Mica" Tag="Mica"/>
+                        <RadioButton Content="Acrylic" Tag="Acrylic"/>
                     </muxc:RadioButtons>
                 </muxc:Expander>
             </StackPanel>
@@ -73,14 +73,17 @@
             <!-- 导航栏设置 -->
             <StackPanel Spacing="12">
                 <TextBlock x:Uid="NavGroup"
-               FontSize="20"
-               FontWeight="SemiBold"/>
+                           FontSize="20"
+                           FontWeight="SemiBold"/>
 
+                <!-- 简化 ComboBox，通过索引而不是 Tag 来判断 -->
                 <ComboBox x:Name="PanePositionCombo"
-              x:Uid="PanePositionCombo"
-              SelectionChanged="PanePositionCombo_SelectionChanged">
-                    <ComboBoxItem x:Uid="PanePositionLeft" Tag="Left"/>
-                    <ComboBoxItem x:Uid="PanePositionTop" Tag="Top"/>
+                          x:Uid="PanePositionCombo"
+                          SelectionChanged="PanePositionCombo_SelectionChanged">
+                    <!-- 索引 0 = Left -->
+                    <ComboBoxItem x:Uid="PanePositionLeft"/>
+                    <!-- 索引 1 = Top -->
+                    <ComboBoxItem x:Uid="PanePositionTop"/>
                 </ComboBox>
             </StackPanel>
 
@@ -108,50 +111,54 @@
                     <muxc:Expander.Header>
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <Image x:Name="ImgAppIcon"
-                   Width="30"
-                   Height="30"
-                   Stretch="Uniform"
-                   Margin="4,0,4,0"/>
+                                   Width="30"
+                                   Height="30"
+                                   Stretch="Uniform"
+                                   Margin="4,0,4,0"/>
                             <StackPanel>
                                 <TextBlock x:Name="TxtAppName"
-                   x:Uid="TxtAppName"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
+                                           FontSize="18"
+                                           FontWeight="SemiBold"/>
                                 <TextBlock x:Name="TxtCopyright"
-                   x:Uid="TxtCopyright"
-                   FontSize="12"
-                   Opacity="0.7"/>
+                                           FontSize="12"
+                                           Opacity="0.7"/>
                                 <TextBlock x:Name="TxtVersion"
-                   x:Uid="TxtVersion"
-                   FontSize="14"
-                   Opacity="0.8"/>
+                                           FontSize="14"
+                                           Opacity="0.8"/>
                             </StackPanel>
                         </StackPanel>
                     </muxc:Expander.Header>
 
                     <StackPanel>
-                        <!-- 加群 -->
+                        <!-- 加QQ群 -->
                         <HyperlinkButton Click="OpenExternalLink"
                                          Tag="https://qm.qq.com/q/UPnTGW164m"
                                          HorizontalAlignment="Left">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE902;" FontSize="16"/>
-                                <TextBlock x:Uid="QQGroup" VerticalAlignment="Center"/>
-                            </StackPanel>
+                            <TextBlock x:Uid="QQGroup" VerticalAlignment="Center"/>
+                        </HyperlinkButton>
+                        <!-- 加Discord群 -->
+                        <HyperlinkButton Click="OpenExternalLink"
+                 Tag="https://discord.gg/4NScc8sEzw"
+                 HorizontalAlignment="Left">
+                            <TextBlock x:Uid="DiscordGroup" VerticalAlignment="Center"/>
                         </HyperlinkButton>
                     </StackPanel>
                 </muxc:Expander>
 
                 <!-- 发送反馈 -->
-                <HyperlinkButton Click="OpenExternalLink"
-                                 Tag="https://github.com/Furry-Xiyi/UWP-Blank-Template"
-                                 Margin="0,8,0,0"
-                                 HorizontalAlignment="Left">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xED15;" FontSize="16"/>
-                        <TextBlock x:Uid="Feedback" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </HyperlinkButton>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+
+                    <FontIcon Glyph="&#xED15;" FontSize="20" VerticalAlignment="Center"/>
+
+                    <HyperlinkButton Click="OpenExternalLink"
+                     Tag="https://github.com/Furry-Xiyi/UWP-Blank-Template"
+                     Padding="0"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center">
+                        <TextBlock x:Uid="Feedback"/>
+                    </HyperlinkButton>
+
+                </StackPanel>
             </StackPanel>
 
         </StackPanel>

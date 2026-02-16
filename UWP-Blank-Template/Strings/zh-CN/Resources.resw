@@ -106,6 +106,9 @@
   <data name="QQGroup.Text" xml:space="preserve">
     <value>QQ群</value>
   </data>
+<data name="DiscordGroup.Text" xml:space="preserve">
+    <value>Discord频道</value>
+  </data>
   <data name="Feedback.Text" xml:space="preserve">
     <value>发送反馈</value>
   </data>

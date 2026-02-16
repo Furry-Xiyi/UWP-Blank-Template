@@ -106,6 +106,9 @@
   <data name="QQGroup.Text" xml:space="preserve">
     <value>QQ Group</value>
   </data>
+  <data name="DiscordGroup.Text" xml:space="preserve">
+    <value>Discord</value>
+  </data>
   <data name="Feedback.Text" xml:space="preserve">
     <value>Send Feedback</value>
   </data>

@@ -21,6 +21,7 @@ namespace UWP
             this.InitializeComponent();
             TitleBarAppName.Text = Package.Current.DisplayName;
             ImgAppIcon.Source = new BitmapImage(Package.Current.Logo);
+
             // 最原生的标题栏扩展
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -35,6 +36,13 @@ namespace UWP
             // 监听导航事件
             ContentFrame.Navigated += ContentFrame_Navigated;
 
+            // 延迟应用设置，确保控件完全初始化
+            this.Loaded += MainPage_Loaded;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 在页面加载完成后应用设置
             ApplySettings();
             UpdateBackButton();
         }
@@ -93,25 +101,48 @@ namespace UWP
 
         public void ApplySettings()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
-            // PanePosition
-            if (localSettings.Values["PanePosition"] is string position)
+            try
             {
+                // 读取导航栏位置设置
+                string position = "Left"; // 默认值
+                if (localSettings.Values.ContainsKey("PanePosition"))
+                {
+                    position = localSettings.Values["PanePosition"] as string ?? "Left";
+                }
+                else
+                {
+                    // 第一次启动，设置默认值
+                    localSettings.Values["PanePosition"] = "Left";
+                }
+
+                // 应用导航栏位置
                 NavView.PaneDisplayMode = position switch
                 {
                     "Top" => NavigationViewPaneDisplayMode.Top,
                     "Left" => NavigationViewPaneDisplayMode.Left,
-                    _ => NavigationViewPaneDisplayMode.Left // 默认左侧
+                    _ => NavigationViewPaneDisplayMode.Left
                 };
-            }
 
-            // Sound
-            if (localSettings.Values["EnableSound"] is bool soundEnabled)
-            {
+                // 读取声音设置
+                bool soundEnabled = true; // 默认开启
+                if (localSettings.Values.ContainsKey("EnableSound"))
+                {
+                    soundEnabled = (bool)localSettings.Values["EnableSound"];
+                }
+                else
+                {
+                    // 第一次启动，设置默认值
+                    localSettings.Values["EnableSound"] = true;
+                }
+
+                // 应用声音设置
                 ElementSoundPlayer.State = soundEnabled
                     ? ElementSoundPlayerState.On
                     : ElementSoundPlayerState.Off;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ApplySettings Error: {ex.Message}");
             }
         }
     }
