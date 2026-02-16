@@ -40,121 +40,42 @@ namespace UWP.Pages
 
             // 导航栏位置
             string pos = localSettings.Values["PanePosition"] as string ?? "Left";
-            PanePositionCombo.SelectedIndex = pos == "Top" ? 1 : 0;
+            foreach (ComboBoxItem item in PanePositionCombo.Items)
+            {
+                if (item.Tag?.ToString() == pos)
+                {
+                    PanePositionCombo.SelectedItem = item;
+                    break;
+                }
+            }
 
             // 声音
             bool sound = (localSettings.Values["EnableSound"] as bool?) ?? true;
             SoundToggle.IsOn = sound;
         }
 
-        public static string GetAppDisplayName()
-        {
-            try
-            {
-                return Package.Current.DisplayName;
-            }
-            catch
-            {
-                return "应用名称";
-            }
-        }
-
         public void LoadAppInfo()
         {
             try
             {
-                // 应用名称
-                TxtAppName.Text = AppInfoHelper.GetAppDisplayName();
+                TxtAppName.Text = Package.Current.DisplayName;
 
-                // 应用版本
-                TxtVersion.Text = $"版本 {AppInfoHelper.GetAppVersion()}";
+                var v = Package.Current.Id.Version;
+                TxtVersion.Text = $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
 
-                // 应用图标
-                ImgAppIcon.Source = AppInfoHelper.GetAppLogo();
+                ImgAppIcon.Source = new BitmapImage(Package.Current.Logo);
 
-                // 版权信息
-                string publisher = AppInfoHelper.GetPublisherName();
+                string publisher = Package.Current.PublisherDisplayName;
                 int year = DateTime.Now.Year;
-                TxtCopyright.Text = $"©{year} {publisher}。保留所有权利。";
+                TxtCopyright.Text =
+                    $"©{year} {publisher}。保留所有权利。";
             }
-            catch (Exception ex)
-            {
-                TxtAppName.Text = "应用名称";
-                TxtVersion.Text = "版本号获取失败";
-                ImgAppIcon.Source = null;
-                int year = DateTime.Now.Year;
-                string publisher = "开发者";
-                System.Diagnostics.Debug.WriteLine($"LoadAppInfo failed: {ex.Message}");
-
-                // 版权
-                TxtCopyright.Text = $"©{year} {publisher}。保留所有权利。";
-            }
+            catch { }
         }
 
-        public static class AppInfoHelper
-        {
-            public static string GetAppDisplayName()
-            {
-                try
-                {
-                    return Package.Current.DisplayName;
-                }
-                catch
-                {
-                    return "应用名称";
-                }
-            }
+        public static string GetAppDisplayName() => Package.Current.DisplayName;
+        public static BitmapImage GetAppLogo() => new BitmapImage(Package.Current.Logo);
 
-            public static string GetAppVersion()
-            {
-                try
-                {
-                    var v = Package.Current.Id.Version;
-                    return $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
-                }
-                catch
-                {
-                    return "版本号获取失败";
-                }
-            }
-
-            public static BitmapImage GetAppLogo()
-            {
-                try
-                {
-                    return new BitmapImage(Package.Current.Logo);
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-
-            public static string GetPublisherName()
-            {
-                try
-                {
-                    return Package.Current.PublisherDisplayName;
-                }
-                catch
-                {
-                    return "开发者";
-                }
-            }
-        }
-
-        private string GetPublisherName()
-        {
-            try
-            {
-                string displayName = Package.Current.PublisherDisplayName;
-                return string.IsNullOrWhiteSpace(displayName) ? "开发者" : displayName;
-            }
-            catch
-            {
-                return "开发者";
-            }
-        }
 
         private async void OpenExternalLink(object sender, RoutedEventArgs e)
         {
@@ -202,7 +123,7 @@ namespace UWP.Pages
         {
             if (_isInitializing) return;
 
-            string selected = (PanePositionCombo.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string selected = (PanePositionCombo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "Left";
             localSettings.Values["PanePosition"] = selected;
 
             var frame = Window.Current.Content as Frame;

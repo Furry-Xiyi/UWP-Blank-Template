@@ -3,12 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Style="{StaticResource DefaultContentDialogStyle}"
-    Title="此应用尝试打开外部应用"
-    PrimaryButtonText="是"
-    SecondaryButtonText="否"
+    x:Uid="ExternalOpenDialog"
     DefaultButton="Secondary">
 
-    <TextBlock Text="是否允许？"
+    <TextBlock x:Uid="DialogMessage"
                TextWrapping="Wrap"
                FontSize="14"/>
 </ContentDialog>

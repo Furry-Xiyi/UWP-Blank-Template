@@ -59,18 +59,20 @@ namespace UWP
         {
             var localSettings = ApplicationData.Current.LocalSettings;
 
+            // 主题
             if (localSettings.Values.ContainsKey("AppTheme"))
             {
                 var theme = localSettings.Values["AppTheme"]?.ToString();
                 CurrentTheme = theme == "Light" ? ElementTheme.Light :
                                theme == "Dark" ? ElementTheme.Dark :
-                               ElementTheme.Default; // "System" 或其他值都映射为 Default
+                               ElementTheme.Default;
             }
             else
             {
-                CurrentTheme = ElementTheme.Default; // 跟随系统
+                CurrentTheme = ElementTheme.Default;
             }
 
+            // 材质
             if (localSettings.Values.ContainsKey("AppMaterial"))
             {
                 var material = localSettings.Values["AppMaterial"]?.ToString();
@@ -79,6 +81,19 @@ namespace UWP
             else
             {
                 CurrentMaterial = BackgroundMaterial.Mica;
+            }
+
+            // 声音
+            if (localSettings.Values.ContainsKey("EnableSound"))
+            {
+                bool soundEnabled = (bool)localSettings.Values["EnableSound"];
+                ElementSoundPlayer.State = soundEnabled ? ElementSoundPlayerState.On : ElementSoundPlayerState.Off;
+            }
+            else
+            {
+                // 第一次启动时没有设置 → 默认开启
+                localSettings.Values["EnableSound"] = true;
+                ElementSoundPlayer.State = ElementSoundPlayerState.On;
             }
         }
 

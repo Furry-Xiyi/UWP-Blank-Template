@@ -7,14 +7,14 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="8ab0d261-bba1-4818-97e0-43ae2ea8423c"
+    Name="28AE62C8.FurryXiyi.UWPTemplate"
     Publisher="CN=69199A48-A765-47C7-BD15-A581600DBBC9"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="8ab0d261-bba1-4818-97e0-43ae2ea8423c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="09ddef43-c36d-4a4a-aa39-e9baee53689d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>UWP模板</DisplayName>
+    <DisplayName>ms-resource:AppDisplayName</DisplayName>
     <PublisherDisplayName>墨枭想睡觉😪💤🐾</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="UWP.App">
       <uap:VisualElements
-        DisplayName="UWP模板"
+        DisplayName="ms-resource:AppDisplayName"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="UWP WinUI2.8.7模板"

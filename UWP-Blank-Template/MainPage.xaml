@@ -15,10 +15,11 @@
             VerticalAlignment="Center"
             Margin="16,0">
 
-                <Image Source="ms-appx:///Assets/StoreLogo.png"
-           Width="16" Height="16"
-           VerticalAlignment="Center"
-           Margin="0,0,8,0"/>
+                <Image x:Name="ImgAppIcon"
+       Width="16"
+       Height="16"
+       VerticalAlignment="Center"
+       Margin="0,0,8,0"/>
 
                 <TextBlock x:Name="TitleBarAppName"
                VerticalAlignment="Center"
@@ -37,7 +38,11 @@
                                      ItemInvoked="NavView_ItemInvoked">
                 <!-- 导航栏 可以在里面塞控件和导航的页 -->
                 <controls:NavigationView.MenuItems>
-                    <controls:NavigationViewItem Content="Home" Icon="Home" Tag="home"/>
+                    <controls:NavigationViewItem x:Uid="HomeItem" Tag="home">
+                        <controls:NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE80F;"/>
+                        </controls:NavigationViewItem.Icon>
+                    </controls:NavigationViewItem>
                 </controls:NavigationView.MenuItems>
 
                 <Frame x:Name="ContentFrame"/>

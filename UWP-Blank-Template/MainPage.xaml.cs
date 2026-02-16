@@ -1,9 +1,11 @@
 ﻿using System;
 using UWP.Pages;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.ApplicationModel.Core;
+using Windows.UI.Xaml.Media.Imaging;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewBackRequestedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs;
 using NavigationViewPaneDisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode;
@@ -17,7 +19,8 @@ namespace UWP
         public MainPage()
         {
             this.InitializeComponent();
-            TitleBarAppName.Text = SettingsPage.GetAppDisplayName();
+            TitleBarAppName.Text = Package.Current.DisplayName;
+            ImgAppIcon.Source = new BitmapImage(Package.Current.Logo);
             // 最原生的标题栏扩展
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -95,9 +98,12 @@ namespace UWP
             // PanePosition
             if (localSettings.Values["PanePosition"] is string position)
             {
-                NavView.PaneDisplayMode = position == "Top"
-                    ? NavigationViewPaneDisplayMode.Top
-                    : NavigationViewPaneDisplayMode.Left;
+                NavView.PaneDisplayMode = position switch
+                {
+                    "Top" => NavigationViewPaneDisplayMode.Top,
+                    "Left" => NavigationViewPaneDisplayMode.Left,
+                    _ => NavigationViewPaneDisplayMode.Left // 默认左侧
+                };
             }
 
             // Sound
