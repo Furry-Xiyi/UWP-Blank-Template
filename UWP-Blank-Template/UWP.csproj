@@ -12,15 +12,14 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <PackageCertificateThumbprint>4324DB8CC341AC2FFC0BC0921C114168A3C6DB9C</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundle>Always</AppxBundle>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
     <PackageCertificateKeyFile>Furry_Moxiao.pfx</PackageCertificateKeyFile>
