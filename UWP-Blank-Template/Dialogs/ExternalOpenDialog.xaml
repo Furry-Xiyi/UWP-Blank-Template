@@ -1,0 +1,14 @@
+﻿<ContentDialog
+    x:Class="UWP.Dialogs.ExternalOpenDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    Title="此应用尝试打开外部应用"
+    PrimaryButtonText="是"
+    SecondaryButtonText="否"
+    DefaultButton="Secondary">
+
+    <TextBlock Text="是否允许？"
+               TextWrapping="Wrap"
+               FontSize="14"/>
+</ContentDialog>

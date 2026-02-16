@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="UWP.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+
+    <Grid>
+        <!-- 标题栏 此处Height为标题栏高度 -->
+        <Grid x:Name="TitleBarArea"
+              Height="32"
+              Background="Transparent"
+              VerticalAlignment="Top">
+
+            <StackPanel Orientation="Horizontal"
+            VerticalAlignment="Center"
+            Margin="16,0">
+
+                <Image Source="ms-appx:///Assets/StoreLogo.png"
+           Width="16" Height="16"
+           VerticalAlignment="Center"
+           Margin="0,0,8,0"/>
+
+                <TextBlock x:Name="TitleBarAppName"
+               VerticalAlignment="Center"
+               FontSize="14"/>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- 主内容区域下移 32px 匹配标题栏高度 -->
+        <Grid Margin="0,32,0,0">
+            <controls:NavigationView x:Name="NavView"
+                                     PaneDisplayMode="Left"
+                                     IsSettingsVisible="True"
+                                     IsBackButtonVisible="Visible"
+                                     BackRequested="NavView_BackRequested"
+                                     ItemInvoked="NavView_ItemInvoked">
+                <!-- 导航栏 可以在里面塞控件和导航的页 -->
+                <controls:NavigationView.MenuItems>
+                    <controls:NavigationViewItem Content="Home" Icon="Home" Tag="home"/>
+                </controls:NavigationView.MenuItems>
+
+                <Frame x:Name="ContentFrame"/>
+            </controls:NavigationView>
+        </Grid>
+
+    </Grid>
+</Page>
