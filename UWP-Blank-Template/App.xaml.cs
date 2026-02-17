@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
 using Windows.ApplicationModel.Activation;
@@ -17,8 +16,6 @@ namespace UWP
         public App()
         {
             this.InitializeComponent();
-            // ❌ 不要在这里加载设置！
-            // AppThemeManager.LoadSettings();
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -29,7 +26,6 @@ namespace UWP
                 rootFrame = new Frame();
                 Window.Current.Content = rootFrame;
 
-                // ✅ 在窗口创建后再加载设置
                 AppThemeManager.LoadSettings();
                 AppThemeManager.ApplyTheme();
                 AppThemeManager.ApplyMaterial();
@@ -44,7 +40,6 @@ namespace UWP
         }
     }
 
-    // 将主题与材质管理器放在 App 后端，供全局调用
     public static class AppThemeManager
     {
         public static ElementTheme CurrentTheme = ElementTheme.Default;
@@ -54,7 +49,6 @@ namespace UWP
         {
             var localSettings = ApplicationData.Current.LocalSettings;
 
-            // 主题 - 改用 TryGetValue 模式
             try
             {
                 if (localSettings.Values.TryGetValue("AppTheme", out object themeObj) && themeObj != null)
@@ -70,12 +64,8 @@ namespace UWP
                     localSettings.Values["AppTheme"] = "System";
                 }
             }
-            catch
-            {
-                CurrentTheme = ElementTheme.Default;
-            }
+            catch { CurrentTheme = ElementTheme.Default; }
 
-            // 材质
             try
             {
                 if (localSettings.Values.TryGetValue("AppMaterial", out object materialObj) && materialObj != null)
@@ -89,12 +79,8 @@ namespace UWP
                     localSettings.Values["AppMaterial"] = "Mica";
                 }
             }
-            catch
-            {
-                CurrentMaterial = BackgroundMaterial.Mica;
-            }
+            catch { CurrentMaterial = BackgroundMaterial.Mica; }
 
-            // 声音 - bool 类型特别容易出问题
             try
             {
                 if (localSettings.Values.TryGetValue("EnableSound", out object soundObj) && soundObj != null)
@@ -108,10 +94,7 @@ namespace UWP
                     ElementSoundPlayer.State = ElementSoundPlayerState.On;
                 }
             }
-            catch
-            {
-                ElementSoundPlayer.State = ElementSoundPlayerState.On;
-            }
+            catch { ElementSoundPlayer.State = ElementSoundPlayerState.On; }
         }
 
         public static void ApplyTheme()
@@ -122,7 +105,6 @@ namespace UWP
                 {
                     rootElement.RequestedTheme = CurrentTheme;
                 }
-
                 CustomizeTitleBar();
             }
             catch (Exception ex)
@@ -138,36 +120,26 @@ namespace UWP
                 var rootFrame = Window.Current.Content as Frame;
                 if (rootFrame == null) return;
 
-                // UWP 官方 Mica API（WinUI 2.6+）
                 if (CurrentMaterial == BackgroundMaterial.Mica)
                 {
-                    // 禁用 Acrylic 的主题监听
                     if (rootFrame is FrameworkElement element)
-                    {
-                        element.ActualThemeChanged -= RootElement_ActualThemeChanged;
-                    }
+                        element.ActualThemeChanged -= OnActualThemeChanged;
 
-                    // 清空背景
                     rootFrame.Background = null;
-
-                    // 正确启用 Mica
                     Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(rootFrame, true);
 
-                    Debug.WriteLine("Mica applied (UWP WinUI 2.x)");
+                    Debug.WriteLine("Mica applied");
                 }
-                else // Acrylic
+                else
                 {
-                    // 禁用 Mica
                     Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(rootFrame, false);
-
-                    rootFrame.Background = null;
 
                     var isDark = GetIsDarkTheme();
                     var tintColor = isDark
                         ? Color.FromArgb(255, 32, 32, 32)
                         : Color.FromArgb(255, 243, 243, 243);
 
-                    var acrylicBrush = new AcrylicBrush
+                    rootFrame.Background = new AcrylicBrush
                     {
                         BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
                         TintColor = tintColor,
@@ -175,15 +147,12 @@ namespace UWP
                         FallbackColor = tintColor
                     };
 
-                    rootFrame.Background = acrylicBrush;
-
                     Debug.WriteLine($"Acrylic applied (Theme: {(isDark ? "Dark" : "Light")})");
 
-                    // Acrylic 监听主题变化
-                    if (rootFrame is FrameworkElement element)
+                    if (rootFrame is FrameworkElement el)
                     {
-                        element.ActualThemeChanged -= RootElement_ActualThemeChanged;
-                        element.ActualThemeChanged += RootElement_ActualThemeChanged;
+                        el.ActualThemeChanged -= OnActualThemeChanged;
+                        el.ActualThemeChanged += OnActualThemeChanged;
                     }
                 }
             }
@@ -191,33 +160,54 @@ namespace UWP
             {
                 Debug.WriteLine($"ApplyMaterial failed: {ex.Message}");
 
-                // 降级为纯色背景
                 if (Window.Current.Content is Frame frame)
                 {
                     var isDark = GetIsDarkTheme();
-                    var fallbackColor = isDark
+                    frame.Background = new SolidColorBrush(isDark
                         ? Color.FromArgb(255, 32, 32, 32)
-                        : Color.FromArgb(255, 243, 243, 243);
-                    frame.Background = new SolidColorBrush(fallbackColor);
+                        : Color.FromArgb(255, 243, 243, 243));
                 }
             }
         }
 
-        private static bool GetIsDarkTheme()
+        public static void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (CurrentTheme == ElementTheme.Default)
-                return Application.Current.RequestedTheme == ApplicationTheme.Dark;
+            // 刷新标题栏颜色（跟随系统主题）
+            CustomizeTitleBar();
 
-            return CurrentTheme == ElementTheme.Dark;
-        }
-
-        private static void RootElement_ActualThemeChanged(FrameworkElement sender, object args)
-        {
+            // 如果当前是 Acrylic，同步刷新背景色
             if (CurrentMaterial == BackgroundMaterial.Acrylic)
             {
-                Debug.WriteLine("Theme changed, refreshing acrylic color");
-                ApplyMaterial();
+                var rootFrame = Window.Current.Content as Frame;
+                if (rootFrame == null) return;
+
+                var isDark = GetIsDarkTheme();
+                var tintColor = isDark
+                    ? Color.FromArgb(255, 32, 32, 32)
+                    : Color.FromArgb(255, 243, 243, 243);
+
+                if (rootFrame.Background is AcrylicBrush brush)
+                {
+                    brush.TintColor = tintColor;
+                    brush.FallbackColor = tintColor;
+                }
+
+                Debug.WriteLine("Acrylic color refreshed on theme change");
             }
+        }
+
+        public static bool GetIsDarkTheme()
+        {
+            if (Window.Current?.Content is FrameworkElement rootElement)
+            {
+                var actual = rootElement.ActualTheme;
+                if (actual != ElementTheme.Default)
+                    return actual == ElementTheme.Dark;
+            }
+            // ActualTheme 不可用时（启动阶段）回退到 CurrentTheme + 系统主题
+            if (CurrentTheme == ElementTheme.Default)
+                return Application.Current.RequestedTheme == ApplicationTheme.Dark;
+            return CurrentTheme == ElementTheme.Dark;
         }
 
         public static void CustomizeTitleBar()
@@ -228,14 +218,15 @@ namespace UWP
                 coreTitleBar.ExtendViewIntoTitleBar = true;
 
                 var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-
                 titleBar.ButtonBackgroundColor = Colors.Transparent;
                 titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
                 var isDark = GetIsDarkTheme();
                 var fg = isDark ? Colors.White : Colors.Black;
                 var inactiveFg = Color.FromArgb(128, fg.R, fg.G, fg.B);
-                var hoverBg = isDark ? Color.FromArgb(20, 255, 255, 255) : Color.FromArgb(20, 0, 0, 0);
+                var hoverBg = isDark
+                    ? Color.FromArgb(20, 255, 255, 255)
+                    : Color.FromArgb(20, 0, 0, 0);
 
                 titleBar.ButtonForegroundColor = fg;
                 titleBar.ButtonInactiveForegroundColor = inactiveFg;
