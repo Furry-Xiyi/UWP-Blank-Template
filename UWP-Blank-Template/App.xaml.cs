@@ -17,34 +17,29 @@ namespace UWP
         public App()
         {
             this.InitializeComponent();
-
-            // 在 App 构造函数中就加载设置
-            AppThemeManager.LoadSettings();
+            // ❌ 不要在这里加载设置！
+            // AppThemeManager.LoadSettings();
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            // 1. 创建 Frame
             Frame rootFrame = Window.Current.Content as Frame;
             if (rootFrame == null)
             {
                 rootFrame = new Frame();
-
-                // 2. 立即设置为 Window.Current.Content（在导航之前）
                 Window.Current.Content = rootFrame;
 
-                // 3. 在导航之前应用主题和材质
+                // ✅ 在窗口创建后再加载设置
+                AppThemeManager.LoadSettings();
                 AppThemeManager.ApplyTheme();
                 AppThemeManager.ApplyMaterial();
             }
 
-            // 4. 导航到 MainPage
             if (rootFrame.Content == null)
             {
                 rootFrame.Navigate(typeof(MainPage));
             }
 
-            // 5. 激活窗口
             Window.Current.Activate();
         }
     }
@@ -59,40 +54,62 @@ namespace UWP
         {
             var localSettings = ApplicationData.Current.LocalSettings;
 
-            // 主题
-            if (localSettings.Values.ContainsKey("AppTheme"))
+            // 主题 - 改用 TryGetValue 模式
+            try
             {
-                var theme = localSettings.Values["AppTheme"]?.ToString();
-                CurrentTheme = theme == "Light" ? ElementTheme.Light :
-                               theme == "Dark" ? ElementTheme.Dark :
-                               ElementTheme.Default;
+                if (localSettings.Values.TryGetValue("AppTheme", out object themeObj) && themeObj != null)
+                {
+                    string theme = themeObj as string ?? themeObj.ToString();
+                    CurrentTheme = theme == "Light" ? ElementTheme.Light :
+                                   theme == "Dark" ? ElementTheme.Dark :
+                                   ElementTheme.Default;
+                }
+                else
+                {
+                    CurrentTheme = ElementTheme.Default;
+                    localSettings.Values["AppTheme"] = "System";
+                }
             }
-            else
+            catch
             {
                 CurrentTheme = ElementTheme.Default;
             }
 
             // 材质
-            if (localSettings.Values.ContainsKey("AppMaterial"))
+            try
             {
-                var material = localSettings.Values["AppMaterial"]?.ToString();
-                CurrentMaterial = material == "Acrylic" ? BackgroundMaterial.Acrylic : BackgroundMaterial.Mica;
+                if (localSettings.Values.TryGetValue("AppMaterial", out object materialObj) && materialObj != null)
+                {
+                    string material = materialObj as string ?? materialObj.ToString();
+                    CurrentMaterial = material == "Acrylic" ? BackgroundMaterial.Acrylic : BackgroundMaterial.Mica;
+                }
+                else
+                {
+                    CurrentMaterial = BackgroundMaterial.Mica;
+                    localSettings.Values["AppMaterial"] = "Mica";
+                }
             }
-            else
+            catch
             {
                 CurrentMaterial = BackgroundMaterial.Mica;
             }
 
-            // 声音
-            if (localSettings.Values.ContainsKey("EnableSound"))
+            // 声音 - bool 类型特别容易出问题
+            try
             {
-                bool soundEnabled = (bool)localSettings.Values["EnableSound"];
-                ElementSoundPlayer.State = soundEnabled ? ElementSoundPlayerState.On : ElementSoundPlayerState.Off;
+                if (localSettings.Values.TryGetValue("EnableSound", out object soundObj) && soundObj != null)
+                {
+                    bool soundEnabled = soundObj is bool b ? b : Convert.ToBoolean(soundObj);
+                    ElementSoundPlayer.State = soundEnabled ? ElementSoundPlayerState.On : ElementSoundPlayerState.Off;
+                }
+                else
+                {
+                    localSettings.Values["EnableSound"] = true;
+                    ElementSoundPlayer.State = ElementSoundPlayerState.On;
+                }
             }
-            else
+            catch
             {
-                // 第一次启动时没有设置 → 默认开启
-                localSettings.Values["EnableSound"] = true;
                 ElementSoundPlayer.State = ElementSoundPlayerState.On;
             }
         }

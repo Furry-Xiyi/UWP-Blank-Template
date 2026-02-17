@@ -130,35 +130,38 @@
                     </muxc:Expander.Header>
 
                     <StackPanel>
-                        <!-- 加QQ群 -->
-                        <HyperlinkButton Click="OpenExternalLink"
-                                         Tag="https://qm.qq.com/q/UPnTGW164m"
-                                         HorizontalAlignment="Left">
-                            <TextBlock x:Uid="QQGroup" VerticalAlignment="Center"/>
-                        </HyperlinkButton>
-                        <!-- 加Discord群 -->
-                        <HyperlinkButton Click="OpenExternalLink"
-                 Tag="https://discord.gg/4NScc8sEzw"
-                 HorizontalAlignment="Left">
-                            <TextBlock x:Uid="DiscordGroup" VerticalAlignment="Center"/>
-                        </HyperlinkButton>
+                        <!-- 加群 -->
+                           <StackPanel>
+       <!-- 加QQ群 -->
+       <HyperlinkButton Click="OpenExternalLink"
+                        Tag="https://qm.qq.com/q/UPnTGW164m"
+                        HorizontalAlignment="Left">
+           <TextBlock x:Uid="QQGroup" VerticalAlignment="Center"/>
+       </HyperlinkButton>
+       <!-- 加Discord群 -->
+       <HyperlinkButton Click="OpenExternalLink"
+Tag="https://discord.gg/4NScc8sEzw"
+HorizontalAlignment="Left">
+           <TextBlock x:Uid="DiscordGroup" VerticalAlignment="Center"/>
+       </HyperlinkButton>
+   </StackPanel>
                     </StackPanel>
                 </muxc:Expander>
 
                 <!-- 发送反馈 -->
                 <StackPanel Orientation="Horizontal" Spacing="8">
 
-                    <FontIcon Glyph="&#xED15;" FontSize="20" VerticalAlignment="Center"/>
+    <FontIcon Glyph="&#xED15;" FontSize="20" VerticalAlignment="Center"/>
 
-                    <HyperlinkButton Click="OpenExternalLink"
-                     Tag="https://github.com/Furry-Xiyi/UWP-Blank-Template"
-                     Padding="0"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Center">
-                        <TextBlock x:Uid="Feedback"/>
-                    </HyperlinkButton>
+    <HyperlinkButton Click="OpenExternalLink"
+     Tag="https://github.com/Furry-Xiyi/UWP-Blank-Template"
+     Padding="0"
+     HorizontalAlignment="Left"
+     VerticalAlignment="Center">
+        <TextBlock x:Uid="Feedback"/>
+    </HyperlinkButton>
 
-                </StackPanel>
+</StackPanel>
             </StackPanel>
 
         </StackPanel>
